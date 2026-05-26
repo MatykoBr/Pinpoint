@@ -23,7 +23,7 @@ interface MapProps {
     waypoints: Waypoint[];
 }
 
-export default function MapDisplay({ waypoints }: MapProps) {
+export default function MapDisplay({ waypoints = [] }: MapProps) {
     const center: [number, number] = waypoints.length > 0 
         ? waypoints[0].position 
         : [51.505, -0.09];
@@ -34,7 +34,7 @@ export default function MapDisplay({ waypoints }: MapProps) {
                 attribution='&copy; <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
             />
             
-            {waypoints.map((point) => (
+            {waypoints && waypoints.map((point) => (
                 <Marker key={point.id} position={point.position}>
                     <Popup>{point.label}</Popup>
                 </Marker>

@@ -1,5 +1,5 @@
-import { Link } from '@inertiajs/react';
-import { BookOpen, FolderGit2, LayoutGrid } from 'lucide-react';
+import { Link, usePage } from '@inertiajs/react';
+import { BookOpen, FolderGit2, LayoutGrid, MapPin, Users, Shield} from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -13,7 +13,7 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { dashboard } from '@/routes';
+import { dashboard, map } from '@/routes';
 import type { NavItem } from '@/types';
 
 const mainNavItems: NavItem[] = [
@@ -22,6 +22,16 @@ const mainNavItems: NavItem[] = [
         href: dashboard(),
         icon: LayoutGrid,
     },
+    {
+        title: 'Map',
+        href: map(),
+        icon: MapPin,
+    },
+    {
+        title: 'Contacts',
+        href: '#',
+        icon: Users,
+    }
 ];
 
 const footerNavItems: NavItem[] = [
@@ -38,6 +48,19 @@ const footerNavItems: NavItem[] = [
 ];
 
 export function AppSidebar() {
+
+    let realFooterNavItems = footerNavItems;
+    const {user} = usePage().props.auth;
+    if (user.is_admin) {
+        realFooterNavItems = [
+            ...footerNavItems,
+            {
+                title: 'User management',
+                href: '#',
+                icon: Shield,
+            }
+        ];
+    }
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>
@@ -57,7 +80,7 @@ export function AppSidebar() {
             </SidebarContent>
 
             <SidebarFooter>
-                <NavFooter items={footerNavItems} className="mt-auto" />
+                <NavFooter items={realFooterNavItems} className="mt-auto" />
                 <NavUser />
             </SidebarFooter>
         </Sidebar>

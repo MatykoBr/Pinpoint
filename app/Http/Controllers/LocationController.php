@@ -3,21 +3,33 @@
 namespace App\Http\Controllers;
 
 use App\Models\Location;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\DB;
 
 class LocationController extends Controller
 {
 
     public function map()
     {
+        $latestPerUser = DB::table('locations')
+            ->select('uid', DB::raw('MAX(created_at) as max_created_at'))
+            ->groupBy('uid');
+
         return Inertia::render('map', [
-            'waypoints' => Location::all()->map(fn ($location) => [
-                'id' => $location->id,
-                'position' => [(float)$location->lat, (float)$location->lng],
-                'label' => User::find($location->uid, 'id')->name ?? 'Unknown',
-            ]),
+            'waypoints' => DB::table('locations')
+                ->joinSub($latestPerUser, 'latest', function ($join) {
+                    $join->on('locations.uid', '=', 'latest.uid')
+                        ->on('locations.created_at', '=', 'latest.max_created_at');
+                })
+                ->leftJoin('users', 'users.id', '=', 'locations.uid')
+                ->select('locations.id', 'locations.lat', 'locations.lng', 'users.name as user_name')
+                ->get()
+                ->map(fn ($location) => [
+                    'id' => (int) $location->id,
+                    'position' => [(float) $location->lat, (float) $location->lng],
+                    'label' => $location->user_name ?? 'Unknown',
+                ]),
         ]);
     }
 

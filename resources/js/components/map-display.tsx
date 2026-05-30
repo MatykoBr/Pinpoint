@@ -26,7 +26,7 @@ interface MapProps {
 export default function MapDisplay({ waypoints = [] }: MapProps) {
     const center: [number, number] = waypoints.length > 0 
         ? waypoints[0].position 
-        : [51.505, -0.09];
+        : [48.208, 16.373];
     return (
         <MapContainer center={center} zoom={8} style={{ height: '100%', width: '100%' }}>
             <TileLayer 

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Settings\ApiKeyController;
 use App\Http\Controllers\Settings\ProfileController;
 use App\Http\Controllers\Settings\SecurityController;
 use Illuminate\Auth\Middleware\RequirePassword;
@@ -24,4 +25,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('user-password.update');
 
     Route::inertia('settings/appearance', 'settings/appearance')->name('appearance.edit');
+
+    Route::post('settings/api-keys', [ApiKeyController::class, 'store'])
+        ->middleware('throttle:20,1')
+        ->name('api-keys.store');
+ 
+    Route::delete('settings/api-keys/{tokenId}', [ApiKeyController::class, 'destroy'])
+        ->name('api-keys.destroy');
 });

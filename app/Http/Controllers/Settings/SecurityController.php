@@ -21,6 +21,7 @@ class SecurityController extends Controller
         $props = [
             'canManageTwoFactor' => Features::canManageTwoFactorAuthentication(),
             'canManagePasskeys' => Features::canManagePasskeys(),
+            'canManageApiKeys' => true,
             'passkeys' => Features::canManagePasskeys()
                 ? $request->user()
                     ->passkeys()
@@ -37,6 +38,19 @@ class SecurityController extends Controller
                     ->values()
                     ->all()
                 : [],
+            'apiKeys' => $request->user()
+                ->tokens()
+                ->select(['id', 'name', 'last_used_at', 'created_at'])
+                ->latest()
+                ->get()
+                ->map(fn ($token) => [
+                    'id'               => $token->id,
+                    'name'             => $token->name,
+                    'created_at_diff'  => $token->created_at->diffForHumans(),
+                    'last_used_at_diff' => $token->last_used_at?->diffForHumans(),
+                ])
+                ->values()
+                ->all(),
             'passwordRules' => Password::defaults()->toPasswordRulesString(),
         ];
 

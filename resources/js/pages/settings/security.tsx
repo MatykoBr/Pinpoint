@@ -6,16 +6,19 @@ import InputError from '@/components/input-error';
 import type { Props as ManagePasskeysProps } from '@/components/manage-passkeys';
 import ManagePasskeys from '@/components/manage-passkeys';
 import type { Props as ManageTwoFactorProps } from '@/components/manage-two-factor';
+import type { Props as ManageApiKeysProps } from '@/components/manage-api-keys';
 import ManageTwoFactor from '@/components/manage-two-factor';
 import PasswordInput from '@/components/password-input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { edit } from '@/routes/security';
+import ManageApiKeys from '@/components/manage-api-keys';
 
 type Props = {
     passwordRules: string;
 } & ManagePasskeysProps &
-    ManageTwoFactorProps;
+    ManageTwoFactorProps &
+    ManageApiKeysProps;
 
 export default function Security(props: Props) {
     const passwordInput = useRef<HTMLInputElement>(null);
@@ -132,6 +135,11 @@ export default function Security(props: Props) {
             <ManagePasskeys
                 canManagePasskeys={props.canManagePasskeys}
                 passkeys={props.passkeys}
+            />
+
+            <ManageApiKeys
+                canManageApiKeys={props.canManageApiKeys}
+                apiKeys={props.apiKeys}
             />
         </>
     );

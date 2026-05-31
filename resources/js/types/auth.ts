@@ -32,3 +32,14 @@ export type TwoFactorSetupData = {
 export type TwoFactorSecretKey = {
     secretKey: string;
 };
+
+export type ApiKey = {
+    id: number;
+    name: string;
+    created_at_diff: string;
+    last_used_at_diff: string | null;
+};
+
+export type ApiKeyWithToken = ApiKey & {
+    token: string;
+};
